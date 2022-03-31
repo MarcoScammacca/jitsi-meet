@@ -41,7 +41,6 @@ import {
     conferenceSubjectChanged,
     conferenceTimestampChanged,
     conferenceUniqueIdSet,
-    conferenceWillJoin,
     conferenceWillLeave,
     dataChannelOpened,
     getConferenceOptions,
@@ -317,25 +316,6 @@ class ConferenceConnector {
         case JitsiConferenceErrors.NOT_ALLOWED_ERROR: {
             // let's show some auth not allowed page
             APP.store.dispatch(redirectToStaticPage('static/authError.html'));
-            break;
-        }
-
-        // not enough rights to create conference
-        case JitsiConferenceErrors.AUTHENTICATION_REQUIRED: {
-
-            const replaceParticipant = getReplaceParticipant(APP.store.getState());
-
-            // Schedule reconnect to check if someone else created the room.
-            this.reconnectTimeout = setTimeout(() => {
-                APP.store.dispatch(conferenceWillJoin(room));
-                room.join(null, replaceParticipant);
-            }, 5000);
-
-            const { password }
-                = APP.store.getState()['features/base/conference'];
-
-            AuthHandler.requireAuth(room, password);
-
             break;
         }
 
